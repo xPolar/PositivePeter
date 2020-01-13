@@ -9,10 +9,10 @@ Welcome to the **Positive Peter** GitHub. Positive Peter is a Discord bot create
 
 # Table of contents
 
-- [Important Links]()
-- [How to use the Positive Peter bot]()
-- [Command List]()
-- [Self hosting]()
+- [Important Links](https://github.com/xPolar/PositivePeter#important-links)
+- [How to use the Positive Peter bot](https://github.com/xPolar/PositivePeter#how-to-use-the-positive-peter-bot)
+- [Command List](https://github.com/xPolar/PositivePeter#command-list)
+- [Self hosting](https://github.com/xPolar/PositivePeter#self-hosting)
 
 # Important links
 - [Bot Invite Link](https://discordapp.com/api/oauth2/authorize?client_id=649535694145847301&permissions=26688&scope=bot)
@@ -21,7 +21,7 @@ Welcome to the **Positive Peter** GitHub. Positive Peter is a Discord bot create
 - [Trello](https://trello.com/b/7xd2iXJB)
 
 # How to use the Positive Peter Bot
-This bot is triggered by certain [keywords](), once the bot has been triggered it will respond with the appropriate response.
+This bot is triggered by certain [keywords](https://github.com/xPolar/PositivePeter/wiki/Triggers), once the bot has been triggered it will respond with the appropriate response.
 
 # Command List
 | Command | Description |
