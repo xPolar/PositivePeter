@@ -101,7 +101,7 @@ class Prevention(commands.Cog):
                         if detections != None:
                             if len(detections["detections"]) >= 5:
                                 embed = discord.Embed(
-                                    title = "Suicie Prevention",
+                                    title = "Suicide Prevention",
                                     description = f"Hey there {message.author.name}, based on your previous message I have detected hints of suicidal thoughts. If you are considering suicide please contact your local suicide prevention hotline, to find your hotline please visit [this](https://en.wikipedia.org/wiki/List_of_suicide_crisis_lines) website.",
                                     color = Config.MAINCOLOR
                                 )
