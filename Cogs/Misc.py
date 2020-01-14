@@ -122,11 +122,11 @@ class Misc(commands.Cog):
         View all the updates that have been made to the bot.
         """
         if ctx.guild is None:
-            prefix = f"{Config.Prefix}"
+            prefix = f"{Config.PREFIX}"
         else:
             prefix = await Config.CLUSTER["servers"]["prefixes"].find_one({"_id": ctx.guild.id})
             if prefix == None:
-                prefix = f"{Config.Prefix}"
+                prefix = f"{Config.PREFIX}"
             else:
                 prefix =  prefix["prefix"]
         emojilist = ["⏮️",
@@ -185,14 +185,20 @@ class Misc(commands.Cog):
         )
         v9 = discord.Embed(
             title = "Update 1.1.0",
-            description = f"Added a system to connect with volunteers and talk to real people.\nUpdated the `{prefix}invite` command.\nAdded a few more triggers.\nAlso a huge thank you to everyone who has supported this bot. It's crazy to see how this bot blew up in less a week we have reached four hundred server{Config.Prefix}",
+            description = f"Added a system to connect with volunteers and talk to real people.\nUpdated the `{prefix}invite` command.\nAdded a few more triggers.\nAlso a huge thank you to everyone who has supported this bot. It's crazy to see how this bot blew up in less a week we have reached four hundred servers!",
             timestamp = datetime.datetime(2019, 12, 4, 1, 0),
             color = Config.MAINCOLOR
         )
-        message = await ctx.send(embed = v9)
+        v10 = discord.Embed(
+            title = "Update 1.2.0",
+            description = f"**Added**\nAutomatic translations\nOptimization\nTargetable hugs with the `{prefix}hug` command\nCustom settings on a per server basis for settings such as disabling compliments and setting custom hotlines.\n",
+            timestamp = datetime.datetime(2020, 1, 13, 23, 58),
+            color = Config.MAINCOLOR
+        )
+        message = await ctx.send(embed = v10)
         async def pagination(self, ctx, page):
             if page <= 0:
-                await pagination(self, ctx, 9)
+                await pagination(self, ctx, 10)
             else:
                 try:
                     await message.clear_reactions()
@@ -200,7 +206,7 @@ class Misc(commands.Cog):
                     for emoji in emojilist:
                         await message.remove_reaction(emoji, self.bot.user)
                 for emoji in emojilist:
-                    if page == 9:
+                    if page == 10:
                         if emoji == "◀️" or emoji == "⏮️":
                             pass
                         else:
@@ -223,7 +229,7 @@ class Misc(commands.Cog):
                 else:
                     reaction = waited_for[0]
                     if reaction.emoji == "⏮️":
-                        page = 9
+                        page = 10
                     elif reaction.emoji == "◀️":
                         page += 1
                     elif reaction.emoji == "⏹️":
@@ -260,12 +266,14 @@ class Misc(commands.Cog):
                         await message.edit(embed = v8)
                         await pagination(self, ctx, 8)
                     elif page == 9:
-                        if message.embeds[0].title == "Update 1.1.0":
+                        await message.edit(embed = v9)
+                    elif page == 10:
+                        if message.embeds[0].title == "Update 1.2.0":
                             pass
                         else:
-                         await message.edit(embed = v9)
-                        await pagination(self, ctx, 9)
-        await pagination(self, ctx, 9)
+                         await message.edit(embed = v10)
+                        await pagination(self, ctx, 10)
+        await pagination(self, ctx, 10)
 
     @commands.group()
     @commands.has_permissions(manage_guild = True)
