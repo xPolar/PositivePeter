@@ -191,7 +191,7 @@ class Misc(commands.Cog):
         )
         v10 = discord.Embed(
             title = "Update 1.2.0",
-            description = f"**Added**\nAutomatic translations\nOptimization\nTargetable hugs with the `{prefix}hug` command\nCustom settings on a per server basis for settings such as disabling compliments and setting custom hotlines.\n",
+            description = f"**Added**\nOptimization\nTargetable hugs with the `{prefix}hug` command\nCustom settings on a per server basis for settings such as disabling compliments and setting custom hotlines.\n",
             timestamp = datetime.datetime(2020, 1, 13, 23, 58),
             color = Config.MAINCOLOR
         )

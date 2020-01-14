@@ -5,9 +5,6 @@ import discord
 from discord.ext import commands
 import Config
 import motor.motor_asyncio
-import googletrans
-from googletrans import Translator
-translator = Translator()
 
 class Volunteer(commands.Cog):
 

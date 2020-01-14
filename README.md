@@ -52,9 +52,6 @@ For Positive Peter to function correctly you must have all the proper libraries 
 pip3 install discord.py
 ```
 ```
-pip3 install googletrans
-```
-```
 pip3 install motor
 ```
 ```

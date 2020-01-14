@@ -5,10 +5,8 @@ import discord
 from discord.ext import commands
 import Config
 import motor.motor_asyncio
-import googletrans
-from googletrans import Translator
 import random
-translator = Translator()
+import logging
 
 class Prevention(commands.Cog):
 
@@ -17,11 +15,10 @@ class Prevention(commands.Cog):
 
     @commands.Cog.listener()
     async def on_message(self, message):
-        if message.author != self.bot.user:
+        if message.author != self.bot.user or message.author.bot == False:
             if message.content == "\n":
                 pass
             else:
-                translate = translator.translate(text = message.content)
                 hint_entrys1 = ["I want to die",
                                "kill myself",
                                "I want to disappear",
@@ -98,20 +95,20 @@ class Prevention(commands.Cog):
                         entry8 = entry.lower().replace(" ", "_")
                     if "kinda" in entry:
                         entry9 = entry.replace("kinda", "kind of")
-                    if entry.lower() in translate.text.lower() or entry2 in translate.text.lower() or entry3 in translate.text.lower() or entry4 in translate.text.lower() or entry5 in translate.text.lower() or entry6 in translate.text.lower() or entry7 in translate.text.lower() or entry8 in translate.text.lower() or entry9 in translate.text.lower():
+                    if entry.lower() in message.content.lower() or entry2 in message.content.lower() or entry3 in message.content.lower() or entry4 in message.content.lower() or entry5 in message.content.lower() or entry6 in message.content.lower() or entry7 in message.content.lower() or entry8 in message.content.lower() or entry9 in message.content.lower():
                         await Config.CLUSTER["users"]["detections"].update_one({"_id": message.author.id}, {"$push": {"detections": entry}}, upsert = True)
                         detections = await Config.CLUSTER["users"]["detections"].find_one({"_id": message.author.id})
                         if detections != None:
                             if len(detections["detections"]) >= 5:
                                 embed = discord.Embed(
-                                    title = translator.translate("Suicie Prevention", dest = translate.src).text,
-                                    description = translator.translate(f"Hey there {message.author.name}, based on your previous message I have detected hints of suicidal thoughts. If you are considering suicide please contact your local suicide prevention hotline, to find your hotline please visit [this]", dest = translate.src).text + "(https://en.wikipedia.org/wiki/List_of_suicide_crisis_lines) " + translator.translate("website.", dest = translate.src).text,
+                                    title = "Suicie Prevention",
+                                    description = f"Hey there {message.author.name}, based on your previous message I have detected hints of suicidal thoughts. If you are considering suicide please contact your local suicide prevention hotline, to find your hotline please visit [this](https://en.wikipedia.org/wiki/List_of_suicide_crisis_lines) website.",
                                     color = Config.MAINCOLOR
                                 )
-                                embed.add_field(name = translator.translate("Contact a volunteer", dest = translate.src).text, value = translator.translate("If you want to talk to a Discord volunteer please react to this message with", dest = translate.src).text + " 🦺 (:safetyvest\:).")
+                                embed.add_field(name = "Contact a volunteer", value = "If you want to talk to a Discord volunteer please react to this message with 🦺 (:safetyvest\:).")
                                 if config != None:
                                     if "hotline" in config:
-                                        embed.add_field(name = translator.translate("Server's custom set hotline", dest = translate.src).text, value = translator.translate(config["hotline"], dest = translate.src).text, inline = False)
+                                        embed.add_field(name = "Server's custom set hotline", value = config["hotline"], inline = False)
                                 msg = await message.author.send(embed = embed)
                                 await msg.add_reaction("🦺")
                                 await Config.CLUSTER["users"]["detections"].delete_one({"_id": message.author.id})
@@ -140,11 +137,11 @@ class Prevention(commands.Cog):
                         if " " in entry:
                             entry7 = entry.lower().replace(" ", "-")
                             entry8 = entry.lower().replace(" ", "_")
-                        if entry.lower() in translate.text.lower() or entry2 in translate.text.lower() or entry3 in translate.text.lower() or entry4 in translate.text.lower() or entry5 in translate.text.lower() or entry6 in translate.text.lower() or entry7 in translate.text.lower() or entry8 in translate.text.lower():
-                            if "I suck dick" in translate.text.lower() or "assuming" in translate.text.lower() or "sadistic" in translate.text.lower():
+                        if entry.lower() in message.content.lower() or entry2 in message.content.lower() or entry3 in message.content.lower() or entry4 in message.content.lower() or entry5 in message.content.lower() or entry6 in message.content.lower() or entry7 in message.content.lower() or entry8 in message.content.lower():
+                            if "I suck dick" in message.content.lower() or "assuming" in message.content.lower() or "sadistic" in message.content.lower():
                                 continue
                             else:
-                                await message.channel.send(translator.translate(hint_entrys2[entry], dest = translate.src).text)
+                                await message.channel.send(hint_entrys2[entry])
                                 break
                         else:
                             continue
