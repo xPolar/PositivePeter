@@ -61,7 +61,7 @@ pip3 install dnspython
 ## Setup
 After you have installed all of the prerequisites listed above you can start on setting up the bot by downloading this repository onto your PC. From there please rename the `ConfigExample.py` file to `Config.py` then open it and enter all of the proper values. If you need help with setting a value please join the [Support Server](https://discord.gg/VwMWj2B).
 
-After you have setup the configuration file you can start the bot by doing the following while in the main file.
+After you have setup the configuration file you can start the bot by doing the following while in the terminal (Make sure you're in the right directory)
 ```
 python3 Main.py
 ```
