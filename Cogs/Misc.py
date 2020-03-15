@@ -425,5 +425,6 @@ class Misc(commands.Cog):
                     color = Config.MAINCOLOR
                 )
                 await ctx.send(embed = embed)
+                
 def setup(bot):
     bot.add_cog(Misc(bot))

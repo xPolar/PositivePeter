@@ -1,116 +1,104 @@
-# Imports
 import asyncio
 import datetime
-import discord
-from discord.ext import commands
-import Config
-import motor.motor_asyncio
-import random
 import logging
+import random
 
-# Logging system setup
-logging.basicConfig(level = logging.INFO, format="Positive Peter | [%(levelname)s] | %(message)s")
+import discord
+import motor.motor_asyncio
+from discord.ext import commands
 
-# Server side prefix thing
+import Config
+
+logging.basicConfig(level = "INFO", format = "Positive Peter |  [%(levelname)s] | %(message)s")
+logger = logging.getLogger('discord')
+logger.setLevel(logging.WARNING)
+handler = logging.FileHandler(filename='discord.log', encoding='utf-8', mode='w')
+handler.setFormatter(logging.Formatter('%(asctime)s:%(levelname)s:%(name)s: %(message)s'))
+logger.addHandler(handler)
+
 async def get_prefix(bot, message):
-    # If the command wasn't used in a server it returns the default prefix
-    if message.guild is None:
+    if message.guild == None:
         return commands.when_mentioned_or(Config.PREFIX)(bot, message)
     else:
-        # Gets all the prefixes from the databse
-        prefix = await Config.CLUSTER["servers"]["prefixes"].find_one({"_id": message.guild.id})
-        # If it can't find a prefix for the server the command was used in it returns the default prefix
-        if prefix == None:
+        prefixes = await Config.CLUSTER["servers"]["prefixes"].find_one({"_id": message.guild.id})
+        if prefixes == None:
             return commands.when_mentioned_or(Config.PREFIX)(bot, message)
         else:
-            # Returns custom prefix if it does exist
-            return prefix["prefix"]
+            return prefixes["prefix"]
 
-# Set prefix and set case insensitive to true so a command will work if miscapitlized
 bot = commands.Bot(command_prefix = get_prefix, case_insensitive = True)
 
-# Remove default help command
-bot.remove_command('help')
+bot.remove_command("help")
 
-# Cogs
-cogs = ["Prevention",
-        "Volunteer",
-        "Misc",
-        "Other"]
+COGS = ["Block", "Configuration", "Ping", "Prefix", "Prevention", "Stop", "Suggest", "Vote", "Invite", "Support", "BotLists", "Help"]
 
-# Starts all cogs
-for cog in cogs:
-    bot.load_extension("Cogs." + cog)
+for Cog in COGS:
+    bot.load_extension(f"Cogs.{Cog}")
+    logging.info(f"Cog: {Cog} has started.")
 
-# Check to see if the user invoking the command is in the OWNERIDS Config
 def owner(ctx):
-    return int(ctx.author.id) in Config.OWNERIDS
+    return ctx.author.id in Config.OWNER_IDS
 
-# Restarts and reloads all cogs
 @bot.command()
-@commands.check(owner)
-async def restart(ctx):
+async def restart(ctx, cog = None):
     """
     Restart the bot.
     """
-    restarting = discord.Embed(
-        title = "Restarting...",
-        color = Config.MAINCOLOR
-    )
-    msg = await ctx.send(embed = restarting)
-    # Gets every cog from the cog list and restarts it
-    for cog in cogs:
-        bot.reload_extension("Cogs." + cog)
-        restarting.add_field(name = f"{cog}", value = "🔁 Restarted!")
-        await msg.edit(embed = restarting)
-    logging.info(f"Bot has been restarted succesfully in {len(bot.guilds)} server(s) with {len(bot.users)} users by {ctx.author.name}#{ctx.author.discriminator} (ID - {ctx.author.id})!")
-    await asyncio.sleep(3)
-    await msg.delete()
-    if ctx.guild != None:
-        try:
-            await ctx.message.delete()
-        except:
-            pass
+    if cog != None:
+        cog = cog.lower().title()
+        bot.reload_extension(f"Cogs.{cog}")
+        logging.info(f"Cog: {cog} has been restarted.")
+        embed = discord.Embed(
+                title = f"Restarted {cog}",
+                description = f"I have restarted cog: {cog}!",
+                color = Config.MAINCOLOR
+        )
+        await ctx.send(embed = embed)
+    else:
+        embed = discord.Embed(
+                title = "Restarting",
+                color = Config.MAINCOLOR
+        )
+        msg = await ctx.send(embed = embed)
+        for Cog in COGS:
+            bot.reload_extension(f"Cogs.{Cog}")
+            logging.info(f"Cog: {Cog} has been restarted.")
+            embed.add_field(name = Cog, value = "🔄 Restarted")
+            await msg.edit(embed = embed)
+        logging.info(f"Bot has restarted successfully in {len(bot.guilds)} server(s) with {len(bot.users)} users!")
+        await asyncio.sleep(3)
+        await msg.delete()
+        if ctx.guild != None:
+            try:
+                await ctx.message.delete()
+            except:
+                pass
 
-# Command error
 @bot.event
 async def on_command_error(ctx, error):
     if isinstance(error, commands.CommandNotFound):
-        pass
+        return
     if isinstance(error, commands.BadArgument):
-        pass
+        return
     else:
         raise error
+        try:
+            embed = discord.Embed(
+                    title = "Error",
+                    description = f"**```\n{error}\n```**",
+                    color = Config.ERRORCOLOR
+            )
+            await ctx.send(embed = embed)
+        except:
+            pass
 
-# On ready
 @bot.event
 async def on_ready():
-    logging.info(f"Bot has been started succesfully in {len(bot.guilds)} server(s) with {len(bot.users)} users!")
-
-    # Loop for status
-    loop = True
-    while loop == True:
-        statuses = [f"{Config.PREFIX}help | 1-800-273-8255",
-                    f"{Config.PREFIX}help | Preventing Suicides"]
-        await bot.change_presence(activity = discord.Game(random.choice(statuses)))
+    logging.info(f"Bot has started successfully in {len(bot.guilds)} server(s) with {len(bot.users)} users!")
+    while True:
+        statueses = [f"{Config.PREFIX}help | 1-800-273-8255",
+                     f"{Config.PREFIX}help | {Config.PREFIX}vote"]
+        await bot.change_presence(activity = discord.Game(random.choice(statueses)))
         await asyncio.sleep(600)
 
-# Log whenever someone invites the bot to their server
-@bot.event
-async def on_guild_join(guild):
-    embed = discord.Embed(
-        title = "Joined a server!",
-        timestamp = datetime.datetime.utcnow(),
-        color = Config.MAINCOLOR
-    )
-    embed.add_field(name = "Guild Name", value = guild.name)
-    embed.add_field(name = "Guild Members", value = len(guild.members))
-    embed.add_field(name = "Guild ID", value = guild.id)
-    embed.add_field(name = "Guild Owner", value = f"{guild.owner.name}#{guild.owner.discriminator}")
-    embed.add_field(name = "Guild Owner ID", value = guild.owner.id)
-    embed.set_footer(text = f"I am now in {len(bot.guilds)} servers")
-    channel = bot.get_channel(Config.JOIN_LOG)
-    await channel.send(embed = embed)
-
-# Starts bot
 bot.run(Config.TOKEN)
