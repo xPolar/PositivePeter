@@ -93,6 +93,22 @@ async def on_command_error(ctx, error):
             pass
 
 @bot.event
+async def on_guild_join(guild):
+    embed = discord.Embed(
+        title = "Joined a server!",
+        timestamp = datetime.datetime.utcnow(),
+        color = Config.MAINCOLOR
+    )
+    embed.add_field(name = "Guild Name", value = guild.name)
+    embed.add_field(name = "Guild Members", value = len(guild.members))
+    embed.add_field(name = "Guild ID", value = guild.id)
+    embed.add_field(name = "Guild Owner", value = f"{guild.owner.name}#{guild.owner.discriminator}")
+    embed.add_field(name = "Guild Owner ID", value = guild.owner.id)
+    embed.set_footer(text = f"I am now in {len(bot.guilds)} servers")
+    channel = bot.get_channel(Config.JOIN_LOG)
+    await channel.send(embed = embed)
+
+@bot.event
 async def on_ready():
     logging.info(f"Bot has started successfully in {len(bot.guilds)} server(s) with {len(bot.users)} users!")
     while True:
