@@ -3,9 +3,9 @@
 
 ![Positive Peter Banner](https://cdn.discordapp.com/attachments/651676721027743754/665786771228983327/SPB.png)
 
-Welcome to the **Positive Peter** GitHub. Positive Peter is a Discord bot created by [Polar#6969](https://discordapp.com/users/619284841187246090). This bot is designed to try and prevent suicides from occurring either by giving positive compliments or providing the resources to contact professionals. If you would like to invite the bot feel free to use [this](https://discordapp.com/api/oauth2/authorize?client_id=649535694145847301&permissions=26688&scope=bot) invite link or get help with the Positive Peter bot feel free to join our [Discord](https://discord.gg/VwMWj2B).
+Welcome to the **Positive Peter** GitHub. Positive Peter is a Discord bot created by [Polar#6880](https://discordapp.com/users/619284841187246090). This bot is designed to try and prevent suicides from occurring either by giving positive compliments or providing the resources to contact professionals. If you would like to invite the bot feel free to use [this](https://discordapp.com/api/oauth2/authorize?client_id=649535694145847301&permissions=26688&scope=bot) invite link or get help with the Positive Peter bot feel free to join our [Discord](https://discord.gg/VwMWj2B).
 
-[![Discord Bots](https://top.gg/api/widget/649535694145847301.svg)](https://top.gg/bot/649535694145847301)
+[![Discord Bots](https://top.gg/api/widget/696257723808874496.svg)](https://top.gg/bot/696257723808874496)
 
 # Table of contents
 
@@ -15,9 +15,9 @@ Welcome to the **Positive Peter** GitHub. Positive Peter is a Discord bot create
 - [Self hosting](https://github.com/xPolar/PositivePeter#self-hosting)
 
 # Important links
-- [Bot Invite Link](https://discordapp.com/api/oauth2/authorize?client_id=649535694145847301&permissions=26688&scope=bot)
+- [Bot Invite Link](https://discordapp.com/api/oauth2/authorize?client_id=696257723808874496&permissions=26688&scope=bot)
 - [Support Server](https://discord.gg/VwMWj2B)
-- [Vote for the bot](https://top.gg/bot/649535694145847301/vote)
+- [Vote for the bot](https://top.gg/bot/696257723808874496/vote)
 - [Trello](https://trello.com/b/7xd2iXJB)
 
 # How to use the Positive Peter Bot
