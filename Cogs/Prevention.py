@@ -2,11 +2,10 @@
 import asyncio
 import random
 
+import Config
 import discord
 import motor.motor_asyncio
 from discord.ext import commands
-
-import Config
 
 
 class Prevention(commands.Cog):
