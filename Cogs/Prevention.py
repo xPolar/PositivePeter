@@ -16,8 +16,7 @@ class Prevention(commands.Cog):
     async def on_message(self, message):
         if not message.author.bot:
             enabled = await Config.CLUSTER["users"]["stopped"].find_one(
-                {"_id": message.author.id}
-            )
+                {"_id": message.author.id})
             if enabled is None:
                 value = True
             else:
@@ -75,37 +74,43 @@ class Prevention(commands.Cog):
                     ]
                     for variant in variants:
                         if variant in message.content.lower():
-                            await Config.CLUSTER["users"]["detections"].update_one(
-                                {"_id": message.guild.id},
-                                {"$inc": {"detections": 1}},
-                                upsert=True,
-                            )
+                            await Config.CLUSTER["users"][
+                                "detections"].update_one(
+                                    {"_id": message.guild.id},
+                                    {"$inc": {
+                                        "detections": 1
+                                    }},
+                                    upsert=True,
+                                )
                             detections = await Config.CLUSTER["users"][
-                                "detections"
-                            ].find_one({"_id": message.guild.id})
+                                "detections"].find_one(
+                                    {"_id": message.guild.id})
                             if detections["detections"] >= 3:
                                 embed = discord.Embed(
                                     title="Suicide Prevention",
-                                    description=f"Hey there {message.author.name}, based on your previous message I have detected hints of suicidal thoughts. If you are considering suicide please contact your local suicide prevention hotline, to find your hotline please visit [this](https://en.wikipedia.org/wiki/List_of_suicide_crisis_lines) website.",
+                                    description=
+                                    f"Hey there {message.author.name}, based on your previous message I have detected hints of suicidal thoughts. If you are considering suicide please contact your local suicide prevention hotline, to find your hotline please visit [this](https://en.wikipedia.org/wiki/List_of_suicide_crisis_lines) website.",
                                     color=Config.MAINCOLOR,
                                 )
                                 hotline = await Config.CLUSTER["servers"][
-                                    "hotlines"
-                                ].find_one({"_id": message.guild.id})
+                                    "hotlines"].find_one(
+                                        {"_id": message.guild.id})
                                 if hotline is not None:
                                     embed.add_field(
                                         name="**Server Side Hotline**",
                                         value=hotline["hotline"],
                                     )
                                 await message.author.send(embed=embed)
-                                await Config.CLUSTER["users"]["detections"].delete_one(
-                                    {"_id": message.guild.id}
-                                )
+                                await Config.CLUSTER["users"][
+                                    "detections"].delete_one(
+                                        {"_id": message.guild.id})
                             break
                 if message.guild is not None:
-                    enabled = await Config.CLUSTER["servers"]["compliments"].find_one(
-                        {"_id": message.guild.id}
-                    )
+                    enabled = await Config.CLUSTER["servers"
+                                                   ]["compliments"].find_one({
+                                                       "_id":
+                                                       message.guild.id
+                                                   })
                     if enabled is None:
                         value = True
                     else:
@@ -117,8 +122,10 @@ class Prevention(commands.Cog):
                                 "You're priceless",
                                 "You're worth more then diamonds!",
                             ],
-                            "I'm not good enough": "You're way more then enough",
-                            "Why am I not good enough?": "You're way more then enough",
+                            "I'm not good enough":
+                            "You're way more then enough",
+                            "Why am I not good enough?":
+                            "You're way more then enough",
                             "I can't do anything right": [
                                 "You're doing just fine!",
                                 "You're perfect!",
@@ -158,18 +165,15 @@ class Prevention(commands.Cog):
                             ]
                             for variant in variants:
                                 if variant in message.content.lower():
-                                    if (
-                                        str(type(compliment_triggers[trigger]))
-                                        == "<class 'list'>"
-                                    ):
+                                    if (str(type(compliment_triggers[trigger]))
+                                            == "<class 'list'>"):
                                         await message.channel.send(
-                                            random.choice(compliment_triggers[trigger])
-                                        )
+                                            random.choice(
+                                                compliment_triggers[trigger]))
                                         break
                                     else:
                                         await message.channel.send(
-                                            compliment_triggers[trigger]
-                                        )
+                                            compliment_triggers[trigger])
 
 
 def setup(bot):
