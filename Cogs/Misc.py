@@ -32,7 +32,7 @@ from discord.ext import commands
 from colorama import Fore, Style
 
 ## Packages on this machine.
-import Config
+from .. import Config
 
 class Misc(commands.Cog):
 

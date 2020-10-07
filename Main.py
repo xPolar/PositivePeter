@@ -134,7 +134,7 @@ async def on_guild_join(guild):
     embed.add_field(name = "Server Owner ID", value = guild.owner.id)
     embed.set_footer(text = f"I am now in {len(bot.guilds)} servers", icon_url = guild.icon_url)
     async with aiohttp.ClientSession() as session:
-        webhook = discord.Webhook.from_url(Config.WEBHOOK, adapter = discord.AsyncWebhookAdapter(session))
+        webhook = discord.Webhook.from_url(Config.JL_WEBHOOK, adapter = discord.AsyncWebhookAdapter(session))
         await webhook.send(embed = embed, username = "Joined a server")
     print(f"{Style.BRIGHT}{Fore.LIGHTGREEN_EX}[JOINED-SERVER]{Fore.WHITE} Joined {Fore.YELLOW}{guild.name}{Fore.WHITE} with {Fore.YELLOW}{len(guild.members) - 1}{Fore.WHITE} members.")
 
@@ -153,7 +153,7 @@ async def on_guild_remove(guild):
     embed.add_field(name = "Server Owner ID", value = guild.owner.id)
     embed.set_footer(text = f"I am now in {len(bot.guilds)} servers", icon_url = guild.icon_url)
     async with aiohttp.ClientSession() as session:
-        webhook = discord.Webhook.from_url(Config.WEBHOOK, adapter = discord.AsyncWebhookAdapter(session))
+        webhook = discord.Webhook.from_url(Config.JL_WEBHOOK, adapter = discord.AsyncWebhookAdapter(session))
         await webhook.send(embed = embed, username = "Left a server")
     print(f"{Style.BRIGHT}{Fore.LIGHTRED_EX}[LEFT-SERVER]{Fore.WHITE} Left {Fore.YELLOW}{guild.name}{Fore.WHITE} with {Fore.YELLOW}{len(guild.members)}{Fore.WHITE} members.")
 
