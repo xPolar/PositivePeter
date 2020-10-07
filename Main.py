@@ -1,120 +1,176 @@
-import asyncio
-import datetime
-import logging
-import random
+"""
+MIT License
 
+Copyright (c) 2020 xPolar
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+"""
+
+# Packages.
+## Packages default to Python.
+import datetime
+
+## Packages that have to be installed through the package manager.
+import aiohttp
 import discord
-import motor.motor_asyncio
+from colorama import Fore, Style, init
 from discord.ext import commands
 
+## Packages on this machine.
 import Config
 
-logging.basicConfig(level = "INFO", format = "Positive Peter |  [%(levelname)s] | %(message)s")
-logger = logging.getLogger('discord')
-logger.setLevel(logging.WARNING)
-handler = logging.FileHandler(filename='discord.log', encoding='utf-8', mode='w')
-handler.setFormatter(logging.Formatter('%(asctime)s:%(levelname)s:%(name)s: %(message)s'))
-logger.addHandler(handler)
+# Initialize colorama
+init()
 
-async def get_prefix(bot, message):
+def get_prefix(bot, message):
+    """Returns the bot's prefix.
+
+    Args:
+        bot (commands.AutoShardedBot): The bot object.
+        message (discord.Message): Message object.
+
+    Returns:
+        str: The prefix the bot will accept.
+    """
     if message.guild == None:
-        return commands.when_mentioned_or(Config.PREFIX)(bot, message)
+        return commands.when_mentioned_or(Config.PREFIX)(bot, message) # Return the default prefix if the message is in a DM.
     else:
-        prefixes = await Config.CLUSTER["servers"]["prefixes"].find_one({"_id": message.guild.id})
-        if prefixes == None:
-            return commands.when_mentioned_or(Config.PREFIX)(bot, message)
-        else:
-            return prefixes["prefix"]
+        # Get database document with the server's custom prefix, if it exists return that otherwise return default prefix.
+        document = Config.CLUSTER["servers"]["prefixes"].find_one({"_id": message.guild.id})
+        return commands.when_mentioned_or(document["prefix"] if document != None else Config.PREFIX)(bot, message)
 
-bot = commands.Bot(command_prefix = get_prefix, case_insensitive = True)
+intents = discord.Intents.default()
+intents.members = True
+bot = commands.AutoShardedBot(command_prefix = get_prefix, case_insensitive = True, intents = intents)
 
-bot.remove_command("help")
+# All of the cogs within the bot that we want to load.
+COGS = []
 
-COGS = ["Block", "Configuration", "Ping", "Prefix", "Prevention", "Stop", "Suggest", "Vote", "Invite", "Support", "BotLists", "Help"]
+# Loads all of our cogs.
+for COG in COGS:
+    bot.load_extension(f"Cogs.{COG}")
+    print(f"{Style.BRIGHT}{Fore.GREEN}[SUCCESS]{Fore.WHITE} Loaded Command: {COG}")
 
-for Cog in COGS:
-    bot.load_extension(f"Cogs.{Cog}")
-    logging.info(f"Cog: {Cog} has started.")
+async def owner(ctx):
+    """Checks if a user is allowed to run the restart.
 
-def owner(ctx):
+    Args:
+        ctx (discord.py's context object): Context object.
+
+    Returns:
+        bool: Wether the user is one of the bot's owners.
+    """
     return ctx.author.id in Config.OWNER_IDS
 
 @bot.command()
-async def restart(ctx, cog = None):
-    """
-    Restart the bot.
-    """
-    if cog != None:
-        cog = cog.lower().title()
-        bot.reload_extension(f"Cogs.{cog}")
-        logging.info(f"Cog: {cog} has been restarted.")
-        embed = discord.Embed(
-                title = f"Restarted {cog}",
-                description = f"I have restarted cog: {cog}!",
-                color = Config.MAINCOLOR
-        )
-        await ctx.send(embed = embed)
-    else:
-        embed = discord.Embed(
-                title = "Restarting",
-                color = Config.MAINCOLOR
-        )
-        msg = await ctx.send(embed = embed)
-        for Cog in COGS:
-            bot.reload_extension(f"Cogs.{Cog}")
-            logging.info(f"Cog: {Cog} has been restarted.")
-            embed.add_field(name = Cog, value = "🔄 Restarted")
-            await msg.edit(embed = embed)
-        logging.info(f"Bot has restarted successfully in {len(bot.guilds)} server(s) with {len(bot.users)} users!")
-        await asyncio.sleep(3)
-        await msg.delete()
-        if ctx.guild != None:
-            try:
-                await ctx.message.delete()
-            except:
-                pass
+@commands.check(owner)
+async def restart(ctx):
+    """Restart the bot's cogs."""
+    embed = discord.Embed(
+        title = "Bot Restarted",
+        color = Config.MAINCOLOR
+    )
+    # Print a new line and then reload each cog, as well as print that each cog has been reloaded, then print out that the bot has been fully reloaded.
+    print()
+    for COG in COGS:
+        bot.reload_extension(f"Cogs.{COG}")
+        print(f"{Style.BRIGHT}{Fore.GREEN}[SUCCESS]{Fore.WHITE} Reloaded Command: {COG}")
+    await ctx.send(embed = embed)
+    print(f"{Style.BRIGHT}{Fore.CYAN}[BOT-RESTARTED]{Fore.WHITE} Restart by {ctx.author} - {ctx.author.id}, I'm currently in {len(bot.guilds)} servers with {len(bot.users)} users!")
 
 @bot.event
 async def on_command_error(ctx, error):
+    """Error Handler."""
     if isinstance(error, commands.CommandNotFound):
         return
-    if isinstance(error, commands.BadArgument):
+    elif isinstance(error, commands.BadArgument):
+        return
+    elif isinstance(error, commands.CheckFailure):
+        return
+    elif isinstance(error, commands.BadUnionArgument):
+        return
+    elif isinstance(error, commands.BotMissingPermissions):
         return
     else:
-        raise error
         try:
             embed = discord.Embed(
                     title = "Error",
                     description = f"**```\n{error}\n```**",
                     color = Config.ERRORCOLOR
             )
+            embed.set_footer(text = "Please report this to Polar#6880")
             await ctx.send(embed = embed)
-        except:
-            pass
+        finally:
+            raise error
 
 @bot.event
 async def on_guild_join(guild):
+    """When the bot joins a server send a webhook with detailed information as well as print out some basic information."""
     embed = discord.Embed(
         title = "Joined a server!",
         timestamp = datetime.datetime.utcnow(),
-        color = Config.MAINCOLOR
+        color = 0x77DD77
     )
-    embed.add_field(name = "Guild Name", value = guild.name)
-    embed.add_field(name = "Guild Members", value = len(guild.members))
-    embed.add_field(name = "Guild ID", value = guild.id)
-    embed.add_field(name = "Guild Owner", value = f"{guild.owner.name}#{guild.owner.discriminator}")
-    embed.add_field(name = "Guild Owner ID", value = guild.owner.id)
-    embed.set_footer(text = f"I am now in {len(bot.guilds)} servers")
-    channel = bot.get_channel(Config.JOIN_LOG)
-    await channel.send(embed = embed)
+    embed.add_field(name = "Server Name", value = guild.name)
+    embed.add_field(name = "Server Members", value = len(guild.members) - 1)
+    embed.add_field(name = "Server ID", value = guild.id)
+    embed.add_field(name = "Server Owner", value = f"{guild.owner.name}#{guild.owner.discriminator}")
+    embed.add_field(name = "Server Owner ID", value = guild.owner.id)
+    embed.set_footer(text = f"I am now in {len(bot.guilds)} servers", icon_url = guild.icon_url)
+    async with aiohttp.ClientSession() as session:
+        webhook = discord.Webhook.from_url(Config.WEBHOOK, adapter = discord.AsyncWebhookAdapter(session))
+        await webhook.send(embed = embed, username = "Joined a server")
+    print(f"{Style.BRIGHT}{Fore.LIGHTGREEN_EX}[JOINED-SERVER]{Fore.WHITE} Joined {Fore.YELLOW}{guild.name}{Fore.WHITE} with {Fore.YELLOW}{len(guild.members) - 1}{Fore.WHITE} members.")
+
+@bot.event
+async def on_guild_remove(guild):
+    """When the bot leaves a server send a webhook with detailed information as well as print out some basic information."""
+    embed = discord.Embed(
+        title = "Left a server!",
+        timestamp = datetime.datetime.utcnow(),
+        color = 0xFF6961
+    )
+    embed.add_field(name = "Server Name", value = guild.name)
+    embed.add_field(name = "Server Members", value = len(guild.members))
+    embed.add_field(name = "Server ID", value = guild.id)
+    embed.add_field(name = "Server Owner", value = f"{guild.owner.name}#{guild.owner.discriminator}")
+    embed.add_field(name = "Server Owner ID", value = guild.owner.id)
+    embed.set_footer(text = f"I am now in {len(bot.guilds)} servers", icon_url = guild.icon_url)
+    async with aiohttp.ClientSession() as session:
+        webhook = discord.Webhook.from_url(Config.WEBHOOK, adapter = discord.AsyncWebhookAdapter(session))
+        await webhook.send(embed = embed, username = "Left a server")
+    print(f"{Style.BRIGHT}{Fore.LIGHTRED_EX}[LEFT-SERVER]{Fore.WHITE} Left {Fore.YELLOW}{guild.name}{Fore.WHITE} with {Fore.YELLOW}{len(guild.members)}{Fore.WHITE} members.")
+
+@bot.event
+async def on_shard_ready(shard_id):
+    """When a shard starts print out that the shard has started.
+
+    Args:
+        shard_id (int): The ID of the shard that has started. (Starts from 0).
+    """
+    print(f"{Style.BRIGHT}{Fore.CYAN}[SHARD-STARTED]{Fore.WHITE} Shard {Fore.YELLOW}{shard_id}{Fore.WHITE} has started!")
 
 @bot.event
 async def on_ready():
-    logging.info(f"Bot has started successfully in {len(bot.guilds)} server(s) with {len(bot.users)} users!")
-    while True:
-        statueses = [f"{Config.PREFIX}help | 1-800-273-8255",
-                     f"{Config.PREFIX}help | {Config.PREFIX}vote"]
-        await bot.change_presence(activity = discord.Game(random.choice(statueses)))
-        await asyncio.sleep(600)
+    """When the bot fully starts print out that the bot has started and set the status."""
+    print(f"{Style.BRIGHT}{Fore.CYAN}[BOT-STARTED]{Fore.WHITE} I'm currently in {len(bot.guilds)} servers with {len(bot.users)} users!")
+    await bot.change_presence(status = discord.Status.dnd, activity = discord.Game(f"with {Config.PREFIX}help"))
 
+# Start the bot.
 bot.run(Config.TOKEN)
