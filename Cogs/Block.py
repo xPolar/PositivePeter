@@ -71,6 +71,16 @@ class Misc(commands.Cog):
             print(f"{Style.BRIGHT}{Fore.RED}[USER-BLOCKED]{Fore.WHITE} {Fore.YELLOW}{user.id}{Fore.WHITE} has been blocked by {Fore.YELLOW}{ctx.author.name}{Fore.WHITE}{ f'for: {reason}' if reason != None else '!' }{Fore.RESET}")
         await ctx.send(embed = embed)
     
+    @block.error
+    async def block_error(self, ctx, error):
+        if isinstance(error, commands.BadUnionArgument):
+            embed = discord.Embed(
+                title = "Invalid Argument",
+                description = "Please provide a valid user to block!",
+                color = Config.ERRORCOLOR
+            )
+            await ctx.send(embed = embed)
+    
     @commands.command(aliases = ["whitelist"])
     async def unblock(self, ctx, user : Union[discord.Member, discord.User, int] = None):
         """Unblock a user from creating suggestions."""
@@ -98,6 +108,16 @@ class Misc(commands.Cog):
             )
             Config.CLUSTER["users"]["blocked"].delete_one({"_id": user.id})
             print(f"{Style.BRIGHT}{Fore.CYAN}[USER-UNBLOCKED]{Fore.WHITE} {Fore.YELLOW}{user.id}{Fore.WHITE} has been unblocked by {Fore.YELLOW}{ctx.author.name}{Fore.WHITE}!{Fore.RESET}")
+        
+    @unblock.error
+    async def unblock_error(self, ctx, error):
+        if isinstance(error, commands.BadUnionArgument):
+            embed = discord.Embed(
+                title = "Invalid Argument",
+                description = "Please provide a valid user to unblock!",
+                color = Config.ERRORCOLOR
+            )
+            await ctx.send(embed = embed)
             
 
 def setup(bot):
