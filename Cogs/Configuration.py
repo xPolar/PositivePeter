@@ -23,6 +23,9 @@ SOFTWARE.
 """
 
 # Packages.
+## Packages default to Python.
+from typing import Union
+
 ## Packages that have to be installed through the package manager.
 import discord
 from discord.ext import commands
@@ -94,6 +97,48 @@ class Misc(commands.Cog):
         )
         Config.CLUSTER["servers"]["compliments"].insert_one({"_id": ctx.guild.id}) if document == None else Config.CLUSTER["servers"]["compliments"].delete_one({"_id": ctx.guild.io})
         await ctx.send(embed = embed)
-        
+    
+    @configuration.command()
+    async def count(self, ctx, count : Union[int, str] = None):
+        if count == None:
+            embed = discord.Embed(
+                title = "Empty Argument",
+                description = "Please provide a number or say `remove` to remove the current count!",
+                color = Config.ERRORCOLOR
+            )
+        else:
+            if isinstance(count, int):
+                embed = discord.Embed(
+                    title = "Count Set",
+                    description = f"I have set the count for this server to `{count}`!",
+                    color = Config.MAINCOLOR
+                )
+                Config.CLUSTER["servers"]["count"].update_one({"_id": ctx.guild.id}, {"$set": {"count": count}}, upsert = True)
+            else:
+                if count.lower() == "remove":
+                    embed = discord.Embed(
+                        title = "Count Removed",
+                        description = "I have removed the count for this server!",
+                        color = Config.MAINCOLOR
+                    )
+                    Config.CLUSTER["servers"]["count"].delete_one({"_id": ctx.guild.id})
+                else:
+                    embed = discord.Embed(
+                        title = "Invalid Argument",
+                        description = "Please provide a valid number or say `remove` to remove the current count!",
+                        color = Config.ERRORCOLOR
+                    )
+        await ctx.send(embed = embed)
+
+    @count.error
+    async def count_error(self, ctx, error):
+        if isinstance(error, commands.BadUnionArgument):
+            embed = discord.Embed(
+                title = "Invalid Argument",
+                description = "Please provide a valid number or say `remove` to remove the current count!",
+                color = Config.ERRORCOLOR
+            )
+            await ctx.send(embed = embed)
+
 def setup(bot):
     bot.add_cog(Misc(bot))
