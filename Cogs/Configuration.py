@@ -25,15 +25,14 @@ SOFTWARE.
 # Packages.
 ## Packages default to Python.
 from typing import Union
-
 ## Packages that have to be installed through the package manager.
 import discord
 from discord.ext import commands
-
 ## Packages on this machine.
-from .. import Config
+import Config
+from Utilities import embed_color, get_prefix
 
-class Misc(commands.Cog):
+class Configuration(commands.Cog):
 
     def __init__(self, bot):
         self.bot = bot
@@ -41,17 +40,24 @@ class Misc(commands.Cog):
     @commands.group(aliases = ["config"])
     @commands.has_permissions(manage_guild = True)
     async def configuration(self, ctx):
-        """Configure the bot in your server to allow for custom hotlines and disable compliments."""
+        """Configure the bot in your server to allow for custom hotlines and disable compliments as well as set a custom number of times for the bot to be triggered before sending a DM to the user."""
         if ctx.invoked_subcommand == None:
+            prefix = get_prefix(ctx.message)
             embed = discord.Embed(
                 title = "Guild Configuration",
-                description = f"**`hotline` - Set the custom server hotline.\n`compliments` - Whether compliments should be sent in {ctx.guild} or not.**",
-                color = Config.MAINCOLOR
+                description = f"**`{prefix}hotline` - Set the custom server hotline.\n`{prefix}compliments` - Whether compliments should be sent in {ctx.guild} or not.\n`{prefix}count` - The amount of times the bot has to be triggered to send a DM to a user.**",
+                color = embed_color(ctx.author) if ctx.guild else Config.MAINCOLOR
             )
             await ctx.send(embed = embed)
     
     @configuration.error
     async def configuration_error(self, ctx, error):
+        """Configuration command error handler.
+
+        Args:
+            ctx (discord.Context): discord.py's context object.
+            error (Exception): The exception that was raised.
+        """
         if isinstance(error, commands.MissingPermissions):
             embed = discord.Embed(
                 title = "Missing Permissions",
@@ -74,14 +80,14 @@ class Misc(commands.Cog):
                 embed = discord.Embed(
                     title = "Hotline Removed",
                     description = "I have removed the custom hotline for this server!",
-                    color = Config.MAINCOLOR
+                    color = embed_color(ctx.author) if ctx.guild else Config.MAINCOLOR
                 )
                 Config.CLUSTER["servers"]["hotlines"].delete_one({"_id": ctx.guild.id})
             else:
                 embed = discord.Embed(
                     title = "Hotline Set",
                     description = f"I have set the custom hotline for this server as `{hotline}`!",
-                    color = Config.MAINCOLOR
+                    color = embed_color(ctx.author) if ctx.guild else Config.MAINCOLOR
                 )
                 Config.CLUSTER["servers"]["hotlines"].update_one({"_id": ctx.guild.id}, {"$set": {"hotline": hotline}}, upsert = True)
         await ctx.send(embed = embed)
@@ -93,13 +99,14 @@ class Misc(commands.Cog):
         embed = discord.Embed(
             title = f"Compliments { 'Enabled' if document != None else 'Disabled'}",
             description = f"I will { 'now' if document != None else 'no longer' } send compliments in this server!",
-            color = Config.MAINCOLOR
+            color = embed_color(ctx.author) if ctx.guild else Config.MAINCOLOR
         )
-        Config.CLUSTER["servers"]["compliments"].insert_one({"_id": ctx.guild.id}) if document == None else Config.CLUSTER["servers"]["compliments"].delete_one({"_id": ctx.guild.io})
+        Config.CLUSTER["servers"]["compliments"].insert_one({"_id": ctx.guild.id}) if document == None else Config.CLUSTER["servers"]["compliments"].delete_one({"_id": ctx.guild.id})
         await ctx.send(embed = embed)
     
     @configuration.command()
     async def count(self, ctx, count : Union[int, str] = None):
+        """Set the amount of times the bot has to be triggered to DM a user."""
         if count == None:
             embed = discord.Embed(
                 title = "Empty Argument",
@@ -111,7 +118,7 @@ class Misc(commands.Cog):
                 embed = discord.Embed(
                     title = "Count Set",
                     description = f"I have set the count for this server to `{count}`!",
-                    color = Config.MAINCOLOR
+                    color = embed_color(ctx.author) if ctx.guild else Config.MAINCOLOR
                 )
                 Config.CLUSTER["servers"]["count"].update_one({"_id": ctx.guild.id}, {"$set": {"count": count}}, upsert = True)
             else:
@@ -119,7 +126,7 @@ class Misc(commands.Cog):
                     embed = discord.Embed(
                         title = "Count Removed",
                         description = "I have removed the count for this server!",
-                        color = Config.MAINCOLOR
+                        color = embed_color(ctx.author) if ctx.guild else Config.MAINCOLOR
                     )
                     Config.CLUSTER["servers"]["count"].delete_one({"_id": ctx.guild.id})
                 else:
@@ -132,6 +139,12 @@ class Misc(commands.Cog):
 
     @count.error
     async def count_error(self, ctx, error):
+        """Configuration Count command error handler.
+
+        Args:
+            ctx (discord.Context): discord.py's context object.
+            error (Exception): The exception that was raised.
+        """
         if isinstance(error, commands.BadUnionArgument):
             embed = discord.Embed(
                 title = "Invalid Argument",
@@ -141,4 +154,4 @@ class Misc(commands.Cog):
             await ctx.send(embed = embed)
 
 def setup(bot):
-    bot.add_cog(Misc(bot))
+    bot.add_cog(Configuration(bot))

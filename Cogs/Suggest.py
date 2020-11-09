@@ -25,16 +25,14 @@ SOFTWARE.
 # Packages.
 ## Packages default to Python.
 from datetime import datetime
-
 ## Packages that have to be installed through the package manager.
-import aiohttp
-import discord
+import aiohttp, discord
 from discord.ext import commands
-
 ## Packages on this machine.
-from .. import Config
+import Config
+from Utilities import embed_color
 
-class Misc(commands.Cog):
+class Suggest(commands.Cog):
 
     def __init__(self, bot):
         self.bot = bot
@@ -46,8 +44,8 @@ class Misc(commands.Cog):
         if blocked != None:
             embed = discord.Embed(
                 title = "Blocked",
-                description = f"You're blocked from making trigger suggestions for: {blocked['reason']}",
-                color = Config.MAINCOLOR
+                description = f"You're blocked from making trigger suggestions{ ' for: ' + blocked['reason'] if blocked['reason'] != 'No reason specified.' else '!' }",
+                color = embed_color(ctx.author) if ctx.guild else Config.MAINCOLOR
             )
         else:
             if suggestion == None:
@@ -57,24 +55,24 @@ class Misc(commands.Cog):
                     color = Config.ERRORCOLOR
                 )
             else:
-                suggestion = suggestion[1:] if suggestion.startwith("[") else suggestion
+                suggestion = suggestion[1:] if suggestion.startswith("[") else suggestion
                 suggestion = suggestion[:-1] if suggestion.endswith("]") else suggestion
                 embed = discord.Embed(
                     title = "Trigger Suggestion",
                     description = suggestion,
                     timestamp = datetime.utcnow(),
-                    color = Config.MAINCOLOR
+                    color = embed_color(ctx.author) if ctx.guild else Config.MAINCOLOR
                 )
-                embed.set_footer(text = f"Suggest by: {ctx.author} - ID: {ctx.author.id}")
+                embed.set_footer(text = f"Suggested by: {ctx.author} - ID: {ctx.author.id}")
                 async with aiohttp.ClientSession() as session:
-                    webhook = discord.Webhook.from_url(Config.WEBHOOK, adapter = discord.AsyncWebhookAdapter(session))
+                    webhook = discord.Webhook.from_url(Config.T_WEBHOOK, adapter = discord.AsyncWebhookAdapter(session))
                     await webhook.send(embed = embed, username = "Trigger Suggestion")
                 embed = discord.Embed(
                     title = "Trigger Suggested",
                     description = "I have suggested your trigger to the Positive Peter Support Server!",
-                    color = Config.MAINCOLOR
+                    color = embed_color(ctx.author) if ctx.guild else Config.MAINCOLOR
                 )
         await ctx.send(embed = embed)
 
 def setup(bot):
-    bot.add_cog(Misc(bot))
+    bot.add_cog(Suggest(bot))

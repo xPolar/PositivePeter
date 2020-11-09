@@ -25,15 +25,14 @@ SOFTWARE.
 # Packages.
 ## Packages default to Python.
 import datetime
-
+from asyncio import sleep
 ## Packages that have to be installed through the package manager.
-import aiohttp
-import discord
+import aiohttp, discord
 from colorama import Fore, Style, init
 from discord.ext import commands
-
 ## Packages on this machine.
 import Config
+from Utilities import embed_color, get_prefix as gp, load_prefixes
 
 # Initialize colorama
 init()
@@ -48,24 +47,22 @@ def get_prefix(bot, message):
     Returns:
         str: The prefix the bot will accept.
     """
-    if message.guild == None:
-        return commands.when_mentioned_or(Config.PREFIX)(bot, message) # Return the default prefix if the message is in a DM.
-    else:
-        # Get database document with the server's custom prefix, if it exists return that otherwise return default prefix.
-        document = Config.CLUSTER["servers"]["prefixes"].find_one({"_id": message.guild.id})
-        return commands.when_mentioned_or(document["prefix"] if document != None else Config.PREFIX)(bot, message)
+    return commands.when_mentioned_or(gp(message))(bot, message)
 
 intents = discord.Intents.default()
 intents.members = True
 bot = commands.AutoShardedBot(command_prefix = get_prefix, case_insensitive = True, intents = intents)
 
-# All of the cogs within the bot that we want to load.
-COGS = []
+# Remove the default help command.
+bot.remove_command("help")
+
+# Load all of the custom prefixes and cheeseboards into the "cache".
+load_prefixes()
 
 # Loads all of our cogs.
-for COG in COGS:
+for COG in Config.COGS:
     bot.load_extension(f"Cogs.{COG}")
-    print(f"{Style.BRIGHT}{Fore.GREEN}[SUCCESS]{Fore.WHITE} Loaded Command: {COG}")
+    print(f"{Style.BRIGHT}{Fore.GREEN}[SUCCESS]{Fore.WHITE} Loaded Cog: {COG}")
 
 async def owner(ctx):
     """Checks if a user is allowed to run the restart.
@@ -76,7 +73,7 @@ async def owner(ctx):
     Returns:
         bool: Wether the user is one of the bot's owners.
     """
-    return ctx.author.id in Config.OWNER_IDS
+    return ctx.author.id in Config.OWNERIDS
 
 @bot.command()
 @commands.check(owner)
@@ -84,13 +81,13 @@ async def restart(ctx):
     """Restart the bot's cogs."""
     embed = discord.Embed(
         title = "Bot Restarted",
-        color = Config.MAINCOLOR
+        color = Config.MAINCOLOR if ctx.guild == None else embed_color(ctx.author)
     )
     # Print a new line and then reload each cog, as well as print that each cog has been reloaded, then print out that the bot has been fully reloaded.
     print()
-    for COG in COGS:
+    for COG in Config.COGS:
         bot.reload_extension(f"Cogs.{COG}")
-        print(f"{Style.BRIGHT}{Fore.GREEN}[SUCCESS]{Fore.WHITE} Reloaded Command: {COG}")
+        print(f"{Style.BRIGHT}{Fore.GREEN}[SUCCESS]{Fore.WHITE} Reloaded Cog: {COG}")
     await ctx.send(embed = embed)
     print(f"{Style.BRIGHT}{Fore.CYAN}[BOT-RESTARTED]{Fore.WHITE} Restart by {ctx.author} - {ctx.author.id}, I'm currently in {len(bot.guilds)} servers with {len(bot.users)} users!")
 
@@ -170,7 +167,9 @@ async def on_shard_ready(shard_id):
 async def on_ready():
     """When the bot fully starts print out that the bot has started and set the status."""
     print(f"{Style.BRIGHT}{Fore.CYAN}[BOT-STARTED]{Fore.WHITE} I'm currently in {len(bot.guilds)} servers with {len(bot.users)} users!")
-    await bot.change_presence(status = discord.Status.dnd, activity = discord.Game(f"with {Config.PREFIX}help"))
+    while True:
+        await bot.change_presence(status = discord.Status.online, activity = discord.Game(f"with {Config.PREFIX}help"))
+        await sleep(1800)
 
 # Start the bot.
 bot.run(Config.TOKEN)

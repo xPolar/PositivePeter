@@ -25,16 +25,15 @@ SOFTWARE.
 # Packages.
 ## Packages default to Python.
 from typing import Union
-
 ## Packages that have to be installed through the package manager.
 import discord
-from discord.ext import commands
 from colorama import Fore, Style
-
+from discord.ext import commands
 ## Packages on this machine.
-from .. import Config
+import Config
+from Utilities import embed_color
 
-class Misc(commands.Cog):
+class Block(commands.Cog):
 
     def __init__(self, bot):
         self.bot = bot
@@ -65,7 +64,7 @@ class Misc(commands.Cog):
             embed = discord.Embed(
                 title = "Blocked",
                 description = f"You have blocked `{user}` from making suggestions{ f' for: {reason}' if reason != None else '!' }",
-                color = Config.MAINCOLOR
+                color = embed_color(ctx.author) if ctx.guild else Config.MAINCOLOR
             )
             Config.CLUSTER["users"]["blocked"].update_one({"_id": user.id}, {"$set": {"reason": "No reason specified." if reason == None else reason}}, upsert = True)
             print(f"{Style.BRIGHT}{Fore.RED}[USER-BLOCKED]{Fore.WHITE} {Fore.YELLOW}{user.id}{Fore.WHITE} has been blocked by {Fore.YELLOW}{ctx.author.name}{Fore.WHITE}{ f'for: {reason}' if reason != None else '!' }{Fore.RESET}")
@@ -73,6 +72,12 @@ class Misc(commands.Cog):
     
     @block.error
     async def block_error(self, ctx, error):
+        """Block command error handler.
+
+        Args:
+            ctx (discord.Context): discord.py's context object.
+            error (Exception): The exception that was raised.
+        """
         if isinstance(error, commands.BadUnionArgument):
             embed = discord.Embed(
                 title = "Invalid Argument",
@@ -104,13 +109,20 @@ class Misc(commands.Cog):
             embed = discord.Embed(
                 title = "Unblocked",
                 description = f"You have unblocked `{user}` from making suggestions!",
-                color = Config.MAINCOLOR
+                color = embed_color(ctx.author) if ctx.guild else Config.MAINCOLOR
             )
             Config.CLUSTER["users"]["blocked"].delete_one({"_id": user.id})
             print(f"{Style.BRIGHT}{Fore.CYAN}[USER-UNBLOCKED]{Fore.WHITE} {Fore.YELLOW}{user.id}{Fore.WHITE} has been unblocked by {Fore.YELLOW}{ctx.author.name}{Fore.WHITE}!{Fore.RESET}")
+        await ctx.send(embed = embed)
         
     @unblock.error
     async def unblock_error(self, ctx, error):
+        """Unblock command error handler.
+
+        Args:
+            ctx (discord.Context): discord.py's context object.
+            error (Exception): The exception that was raised.
+        """
         if isinstance(error, commands.BadUnionArgument):
             embed = discord.Embed(
                 title = "Invalid Argument",
@@ -120,4 +132,4 @@ class Misc(commands.Cog):
             await ctx.send(embed = embed)
 
 def setup(bot):
-    bot.add_cog(Misc(bot))
+    bot.add_cog(Block(bot))

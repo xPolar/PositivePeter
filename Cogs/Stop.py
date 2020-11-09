@@ -26,12 +26,11 @@ SOFTWARE.
 ## Packages that have to be installed through the package manager.
 import discord
 from discord.ext import commands
-from colorama import Fore, Style
-
 ## Packages on this machine.
-from .. import Config
+import Config
+from Utilities import embed_color
 
-class Misc(commands.Cog):
+class Stop(commands.Cog):
 
     def __init__(self, bot):
         self.bot = bot
@@ -39,14 +38,14 @@ class Misc(commands.Cog):
     @commands.command()
     async def stop(self, ctx):
         f"""Disable or enable the {self.bot.user.name} from sending you direct messages."""
-        document = Config.CLUSTER["servers"]["compliments"].find_one({"_id": ctx.guild.id})
+        document = Config.CLUSTER["users"]["stopped"].find_one({"_id": ctx.author.id})
         embed = discord.Embed(
             title = f"{ 'Contuning' if document != None else 'Stopping'} Messages",
             description = f"I will { 'now' if document != None else 'no longer' } direct message you!",
-            color = Config.MAINCOLOR
+            color = embed_color(ctx.author) if ctx.guild else Config.MAINCOLOR
         )
-        Config.CLUSTER["users"]["stopped"].insert_one({"_id": ctx.guild.id}) if document == None else Config.CLUSTER["users"]["stopped"].delete_one({"_id": ctx.guild.io})
+        Config.CLUSTER["users"]["stopped"].insert_one({"_id": ctx.author.id}) if document == None else Config.CLUSTER["users"]["stopped"].delete_one({"_id": ctx.author.id})
         await ctx.send(embed = embed)
     
 def setup(bot):
-    bot.add_cog(Misc(bot))
+    bot.add_cog(Stop(bot))
