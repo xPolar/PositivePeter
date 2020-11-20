@@ -1,0 +1,180 @@
+2020-10-20 09:13:47,372:WARNING:discord.client: PyNaCl is not installed, voice will NOT be supported
+2020-10-21 10:08:07,184:ERROR:discord.client: Attempting a reconnect in 0.93s
+Traceback (most recent call last):
+  File "/usr/local/lib/python3.6/dist-packages/discord/client.py", line 548, in connect
+    self.ws = await asyncio.wait_for(coro, timeout=60.0)
+  File "/usr/lib/python3.6/asyncio/tasks.py", line 362, in wait_for
+    raise futures.TimeoutError()
+concurrent.futures._base.TimeoutError
+2020-10-22 19:02:13,148:ERROR:discord.client: Attempting a reconnect in 0.54s
+Traceback (most recent call last):
+  File "/usr/local/lib/python3.6/dist-packages/discord/client.py", line 551, in connect
+    await self.ws.poll_event()
+  File "/usr/local/lib/python3.6/dist-packages/discord/gateway.py", line 578, in poll_event
+    raise ConnectionClosed(self.socket, shard_id=self.shard_id, code=code) from None
+discord.errors.ConnectionClosed: Shard ID None WebSocket closed with 1000
+2020-10-28 05:50:20,314:ERROR:discord.client: Attempting a reconnect in 1.25s
+Traceback (most recent call last):
+  File "/usr/local/lib/python3.6/dist-packages/discord/client.py", line 548, in connect
+    self.ws = await asyncio.wait_for(coro, timeout=60.0)
+  File "/usr/lib/python3.6/asyncio/tasks.py", line 358, in wait_for
+    return fut.result()
+  File "/usr/local/lib/python3.6/dist-packages/discord/gateway.py", line 297, in from_client
+    socket = await client.http.ws_connect(gateway)
+  File "/usr/local/lib/python3.6/dist-packages/discord/http.py", line 132, in ws_connect
+    return await self.__session.ws_connect(url, **kwargs)
+  File "/usr/local/lib/python3.6/dist-packages/aiohttp/client.py", line 738, in _ws_connect
+    headers=resp.headers)
+aiohttp.client_exceptions.WSServerHandshakeError: 502, message='Invalid response status', url=URL('wss://gateway.discord.gg/?encoding=json&v=6&compress=zlib-stream')
+2020-10-28 05:50:22,024:ERROR:discord.client: Attempting a reconnect in 1.94s
+Traceback (most recent call last):
+  File "/usr/local/lib/python3.6/dist-packages/discord/client.py", line 548, in connect
+    self.ws = await asyncio.wait_for(coro, timeout=60.0)
+  File "/usr/lib/python3.6/asyncio/tasks.py", line 358, in wait_for
+    return fut.result()
+  File "/usr/local/lib/python3.6/dist-packages/discord/gateway.py", line 297, in from_client
+    socket = await client.http.ws_connect(gateway)
+  File "/usr/local/lib/python3.6/dist-packages/discord/http.py", line 132, in ws_connect
+    return await self.__session.ws_connect(url, **kwargs)
+  File "/usr/local/lib/python3.6/dist-packages/aiohttp/client.py", line 738, in _ws_connect
+    headers=resp.headers)
+aiohttp.client_exceptions.WSServerHandshakeError: 502, message='Invalid response status', url=URL('wss://gateway.discord.gg/?encoding=json&v=6&compress=zlib-stream')
+2020-10-28 05:50:24,218:ERROR:discord.client: Attempting a reconnect in 2.34s
+Traceback (most recent call last):
+  File "/usr/local/lib/python3.6/dist-packages/discord/client.py", line 548, in connect
+    self.ws = await asyncio.wait_for(coro, timeout=60.0)
+  File "/usr/lib/python3.6/asyncio/tasks.py", line 358, in wait_for
+    return fut.result()
+  File "/usr/local/lib/python3.6/dist-packages/discord/gateway.py", line 297, in from_client
+    socket = await client.http.ws_connect(gateway)
+  File "/usr/local/lib/python3.6/dist-packages/discord/http.py", line 132, in ws_connect
+    return await self.__session.ws_connect(url, **kwargs)
+  File "/usr/local/lib/python3.6/dist-packages/aiohttp/client.py", line 738, in _ws_connect
+    headers=resp.headers)
+aiohttp.client_exceptions.WSServerHandshakeError: 502, message='Invalid response status', url=URL('wss://gateway.discord.gg/?encoding=json&v=6&compress=zlib-stream')
+2020-11-03 03:40:14,091:ERROR:discord.client: Attempting a reconnect in 1.85s
+Traceback (most recent call last):
+  File "/usr/local/lib/python3.6/dist-packages/discord/client.py", line 551, in connect
+    await self.ws.poll_event()
+  File "/usr/local/lib/python3.6/dist-packages/discord/gateway.py", line 578, in poll_event
+    raise ConnectionClosed(self.socket, shard_id=self.shard_id, code=code) from None
+discord.errors.ConnectionClosed: Shard ID None WebSocket closed with 1000
+2020-11-07 05:24:25,175:ERROR:discord.client: Attempting a reconnect in 0.12s
+Traceback (most recent call last):
+  File "/usr/local/lib/python3.6/dist-packages/discord/client.py", line 551, in connect
+    await self.ws.poll_event()
+  File "/usr/local/lib/python3.6/dist-packages/discord/gateway.py", line 578, in poll_event
+    raise ConnectionClosed(self.socket, shard_id=self.shard_id, code=code) from None
+discord.errors.ConnectionClosed: Shard ID None WebSocket closed with 1000
+2020-11-07 05:25:25,357:ERROR:discord.client: Attempting a reconnect in 1.64s
+Traceback (most recent call last):
+  File "/usr/local/lib/python3.6/dist-packages/discord/client.py", line 548, in connect
+    self.ws = await asyncio.wait_for(coro, timeout=60.0)
+  File "/usr/lib/python3.6/asyncio/tasks.py", line 362, in wait_for
+    raise futures.TimeoutError()
+concurrent.futures._base.TimeoutError
+2020-11-07 05:25:45,590:ERROR:discord.client: Attempting a reconnect in 4.63s
+Traceback (most recent call last):
+  File "/usr/local/lib/python3.6/dist-packages/discord/client.py", line 548, in connect
+    self.ws = await asyncio.wait_for(coro, timeout=60.0)
+  File "/usr/lib/python3.6/asyncio/tasks.py", line 358, in wait_for
+    return fut.result()
+  File "/usr/local/lib/python3.6/dist-packages/discord/gateway.py", line 297, in from_client
+    socket = await client.http.ws_connect(gateway)
+  File "/usr/local/lib/python3.6/dist-packages/discord/http.py", line 132, in ws_connect
+    return await self.__session.ws_connect(url, **kwargs)
+  File "/usr/local/lib/python3.6/dist-packages/aiohttp/client.py", line 738, in _ws_connect
+    headers=resp.headers)
+aiohttp.client_exceptions.WSServerHandshakeError: 520, message='Invalid response status', url=URL('wss://gateway.discord.gg/?encoding=json&v=6&compress=zlib-stream')
+2020-11-07 05:26:50,240:ERROR:discord.client: Attempting a reconnect in 4.64s
+Traceback (most recent call last):
+  File "/usr/local/lib/python3.6/dist-packages/discord/client.py", line 548, in connect
+    self.ws = await asyncio.wait_for(coro, timeout=60.0)
+  File "/usr/lib/python3.6/asyncio/tasks.py", line 362, in wait_for
+    raise futures.TimeoutError()
+concurrent.futures._base.TimeoutError
+2020-11-07 05:27:54,935:ERROR:discord.client: Attempting a reconnect in 21.61s
+Traceback (most recent call last):
+  File "/usr/local/lib/python3.6/dist-packages/discord/client.py", line 548, in connect
+    self.ws = await asyncio.wait_for(coro, timeout=60.0)
+  File "/usr/lib/python3.6/asyncio/tasks.py", line 362, in wait_for
+    raise futures.TimeoutError()
+concurrent.futures._base.TimeoutError
+2020-11-07 05:28:45,577:ERROR:discord.client: Attempting a reconnect in 11.98s
+Traceback (most recent call last):
+  File "/usr/local/lib/python3.6/dist-packages/discord/client.py", line 548, in connect
+    self.ws = await asyncio.wait_for(coro, timeout=60.0)
+  File "/usr/lib/python3.6/asyncio/tasks.py", line 358, in wait_for
+    return fut.result()
+  File "/usr/local/lib/python3.6/dist-packages/discord/gateway.py", line 297, in from_client
+    socket = await client.http.ws_connect(gateway)
+  File "/usr/local/lib/python3.6/dist-packages/discord/http.py", line 132, in ws_connect
+    return await self.__session.ws_connect(url, **kwargs)
+  File "/usr/local/lib/python3.6/dist-packages/aiohttp/client.py", line 738, in _ws_connect
+    headers=resp.headers)
+aiohttp.client_exceptions.WSServerHandshakeError: 520, message='Invalid response status', url=URL('wss://gateway.discord.gg/?encoding=json&v=6&compress=zlib-stream')
+2020-11-07 05:29:54,682:ERROR:discord.client: Attempting a reconnect in 2.24s
+Traceback (most recent call last):
+  File "/usr/local/lib/python3.6/dist-packages/discord/client.py", line 548, in connect
+    self.ws = await asyncio.wait_for(coro, timeout=60.0)
+  File "/usr/lib/python3.6/asyncio/tasks.py", line 358, in wait_for
+    return fut.result()
+  File "/usr/local/lib/python3.6/dist-packages/discord/gateway.py", line 297, in from_client
+    socket = await client.http.ws_connect(gateway)
+  File "/usr/local/lib/python3.6/dist-packages/discord/http.py", line 132, in ws_connect
+    return await self.__session.ws_connect(url, **kwargs)
+  File "/usr/local/lib/python3.6/dist-packages/aiohttp/client.py", line 738, in _ws_connect
+    headers=resp.headers)
+aiohttp.client_exceptions.WSServerHandshakeError: 522, message='Invalid response status', url=URL('wss://gateway.discord.gg/?encoding=json&v=6&compress=zlib-stream')
+2020-11-07 05:30:23,541:ERROR:discord.client: Attempting a reconnect in 63.09s
+Traceback (most recent call last):
+  File "/usr/local/lib/python3.6/dist-packages/discord/client.py", line 548, in connect
+    self.ws = await asyncio.wait_for(coro, timeout=60.0)
+  File "/usr/lib/python3.6/asyncio/tasks.py", line 358, in wait_for
+    return fut.result()
+  File "/usr/local/lib/python3.6/dist-packages/discord/gateway.py", line 297, in from_client
+    socket = await client.http.ws_connect(gateway)
+  File "/usr/local/lib/python3.6/dist-packages/discord/http.py", line 132, in ws_connect
+    return await self.__session.ws_connect(url, **kwargs)
+  File "/usr/local/lib/python3.6/dist-packages/aiohttp/client.py", line 738, in _ws_connect
+    headers=resp.headers)
+aiohttp.client_exceptions.WSServerHandshakeError: 520, message='Invalid response status', url=URL('wss://gateway.discord.gg/?encoding=json&v=6&compress=zlib-stream')
+2020-11-07 05:31:41,300:ERROR:discord.client: Attempting a reconnect in 201.31s
+Traceback (most recent call last):
+  File "/usr/local/lib/python3.6/dist-packages/discord/client.py", line 548, in connect
+    self.ws = await asyncio.wait_for(coro, timeout=60.0)
+  File "/usr/lib/python3.6/asyncio/tasks.py", line 358, in wait_for
+    return fut.result()
+  File "/usr/local/lib/python3.6/dist-packages/discord/gateway.py", line 297, in from_client
+    socket = await client.http.ws_connect(gateway)
+  File "/usr/local/lib/python3.6/dist-packages/discord/http.py", line 132, in ws_connect
+    return await self.__session.ws_connect(url, **kwargs)
+  File "/usr/local/lib/python3.6/dist-packages/aiohttp/client.py", line 738, in _ws_connect
+    headers=resp.headers)
+aiohttp.client_exceptions.WSServerHandshakeError: 520, message='Invalid response status', url=URL('wss://gateway.discord.gg/?encoding=json&v=6&compress=zlib-stream')
+2020-11-07 05:35:14,107:ERROR:discord.client: Attempting a reconnect in 818.09s
+Traceback (most recent call last):
+  File "/usr/local/lib/python3.6/dist-packages/discord/client.py", line 548, in connect
+    self.ws = await asyncio.wait_for(coro, timeout=60.0)
+  File "/usr/lib/python3.6/asyncio/tasks.py", line 358, in wait_for
+    return fut.result()
+  File "/usr/local/lib/python3.6/dist-packages/discord/gateway.py", line 297, in from_client
+    socket = await client.http.ws_connect(gateway)
+  File "/usr/local/lib/python3.6/dist-packages/discord/http.py", line 132, in ws_connect
+    return await self.__session.ws_connect(url, **kwargs)
+  File "/usr/local/lib/python3.6/dist-packages/aiohttp/client.py", line 738, in _ws_connect
+    headers=resp.headers)
+aiohttp.client_exceptions.WSServerHandshakeError: 520, message='Invalid response status', url=URL('wss://gateway.discord.gg/?encoding=json&v=6&compress=zlib-stream')
+2020-11-07 05:49:11,987:ERROR:discord.client: Attempting a reconnect in 811.03s
+Traceback (most recent call last):
+  File "/usr/local/lib/python3.6/dist-packages/discord/client.py", line 548, in connect
+    self.ws = await asyncio.wait_for(coro, timeout=60.0)
+  File "/usr/lib/python3.6/asyncio/tasks.py", line 358, in wait_for
+    return fut.result()
+  File "/usr/local/lib/python3.6/dist-packages/discord/gateway.py", line 297, in from_client
+    socket = await client.http.ws_connect(gateway)
+  File "/usr/local/lib/python3.6/dist-packages/discord/http.py", line 132, in ws_connect
+    return await self.__session.ws_connect(url, **kwargs)
+  File "/usr/local/lib/python3.6/dist-packages/aiohttp/client.py", line 738, in _ws_connect
+    headers=resp.headers)
+aiohttp.client_exceptions.WSServerHandshakeError: 520, message='Invalid response status', url=URL('wss://gateway.discord.gg/?encoding=json&v=6&compress=zlib-stream')

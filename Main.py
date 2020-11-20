@@ -50,7 +50,7 @@ def get_prefix(bot, message):
     return commands.when_mentioned_or(gp(message))(bot, message)
 
 intents = discord.Intents.default()
-intents.members = True
+# intents.members = True
 bot = commands.AutoShardedBot(command_prefix = get_prefix, case_insensitive = True, intents = intents)
 
 # Remove the default help command.

@@ -37,7 +37,7 @@ class Prevention(commands.Cog):
 
     def __init__(self, bot):
         self.bot = bot
-        with open(r"PATH/TO/TRIGGERS/JSON") as file: # MAKE SURE TO INCLUDE THE FULL PATH TO THE FILE.
+        with open(Config.PATH) as file: # MAKE SURE TO INCLUDE THE FULL PATH TO THE FILE.
             self.triggers = load(file)
 
     @commands.Cog.listener()
@@ -86,9 +86,15 @@ class Prevention(commands.Cog):
                             for variant in variants:
                                 if variant in message.content.lower():
                                     if isinstance(self.triggers["compliment"][trigger], list):
-                                        await message.channel.send(choice(self.triggers["compliment"][trigger]))
+                                        try:
+                                            await message.channel.send(choice(self.triggers["compliment"][trigger]))
+                                        except discord.Forbidden:
+                                            pass
                                     else:
-                                        await message.channel.send(self.triggers["compliment"][trigger])
+                                        try:
+                                            await message.channel.send(self.triggers["compliment"][trigger])
+                                        except discord.Forbidden:
+                                            pass
                                     break
 
 def setup(bot):

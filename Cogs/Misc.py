@@ -113,7 +113,7 @@ class Misc(commands.Cog):
         )
         embed.add_field(name = "📊 Bot Statistics", value = f"**Servers:** {len(self.bot.guilds)}\n**Users:** {len(self.bot.users)}\n**Channels:** {channels}\n**Roles:** {roles}\n**Shards:** {self.bot.shard_count} `[ID: {(ctx.guild.shard_id if ctx.guild else 0) + 1}]`", inline = False)
         embed.add_field(name = "📋 Bot Information", value = f"**Creator:** [**Polar#6880**](https://discord.com/users/619284841187246090)\n**Bot Version:** {__version__}\n**Lines of Code:** 2790\n**Commands:** {commands}")
-        embed.add_field(name = "🖥 Hardware", value = f"**discord.py Version:** v{discord.__version__}\n**Python Version:** {platform.python_build()[0].split('/')[1].split(':')[0]}\n**Operating System:** {platform.system()} {platform.release()} {platform.version()}\n**Memory Usage:** {(current_mem / total_mem) * 100:.2f}% ({process.memory_info().rss / 1000000:.2f}mb)", inline = False)
+        embed.add_field(name = "🖥 Hardware", value = f"**discord.py Version:** v{discord.__version__}\n**Python Version:** {platform.python_version()}\n**Operating System:** {platform.system()} {platform.release()} {platform.version()}\n**Memory Usage:** {(current_mem / total_mem) * 100:.2f}% ({process.memory_info().rss / 1000000:.2f}mb)", inline = False)
         await ctx.send(embed = embed)
 
     @commands.command()
