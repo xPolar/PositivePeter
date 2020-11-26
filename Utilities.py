@@ -30,7 +30,7 @@ from colorama import Style, Fore
 import Config
 
 # The version the bot is currently on, should change on every single update. 
-__version__ = "v3.0.0"
+__version__ = "v3.0.1"
 
 # Prefix dictionary so I don't have to query database each time, now only have to make one query when the bot starts.
 prefixes = {}
