@@ -27,7 +27,7 @@ SOFTWARE.
 from json import load
 from random import choice
 ## Packages that have to be installed through the package manager.
-import discord
+import discord, pymongo
 from discord.ext import commands
 ## Packages on this machine.
 import Config
@@ -56,7 +56,11 @@ class Prevention(commands.Cog):
                     variants = [trigger, trigger.replace("'", ""), trigger.replace("i'm", "im"), trigger.replace("i'm", "i am"), trigger.replace("want to", "wanna"), trigger.replace("can't", "cant"), trigger.replace("can't", "can not"), trigger.replace("don't", "dont"), trigger.replace("don't", "do not")]
                     for variant in variants:
                         if variant in message.content.lower():
-                            Config.CLUSTER["users"]["detections"].update_one({"_id": message.author.id}, {"$inc": {"detections": 1}}, upsert = True)
+                            try:
+                                Config.CLUSTER["users"]["detections"].update_one({"_id": message.author.id}, {"$inc": {"detections": 1}}, upsert = True)
+                            except pymongo.errors.WriteError:
+                                document = Config.CLUSTER["users"]["detections"].find_one({"_id": message.author.id})
+                                Config.CLUSTER["users"]["detections"].update_one({"_id": message.author.id}, {"$set": {"detections": len(document["detections"]) + 1}})
                             detections = Config.CLUSTER["users"]["detections"].find_one({"_id": message.author.id})
                             count = 3
                             if message.guild:
